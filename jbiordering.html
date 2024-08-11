@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Request Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        form {
+            background: #fff;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input[type="text"], input[type="number"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background: #28a745;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #218838;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .edit, .delete {
+            cursor: pointer;
+            color: #007bff;
+        }
+        .edit:hover {
+            color: #0056b3;
+        }
+        .delete:hover {
+            color: #d9534f;
+        }
+        #exportButton {
+            display: block;
+            margin: 20px 0;
+            background: #007bff;
+        }
+        #exportButton:hover {
+            background: #0069d9;
+        }
+        #totalCost {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Order Request Form</h1>
+    <form id="orderForm">
+        <label for="partNumber">Part Number:</label>
+        <input type="text" id="partNumber" name="partNumber" required>
+        <label for="quantity">Quantity:</label>
+        <input type="number" id="quantity" name="quantity" required>
+        <button type="button" onclick="addItem()">Add Item</button>
+        <button type="button" onclick="updateItem()" style="display: none;">Update Item</button>
+    </form>
+
+    <h2>Items List</h2>
+    <table id="itemsTable">
+        <thead>
+            <tr>
+                <th>Part Number</th>
+                <th>Quantity</th>
+                <th>Price per Unit</th>
+                <th>Description</th>
+                <th>Total Price</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Items will be added here -->
+        </tbody>
+    </table>
+
+    <button id="exportButton" onclick="exportCSV()">Export as CSV</button>
+
+    <div id="totalCost">Total Order Price: $0.00</div>
+
+    <script>
+        const items = [];
+        let currentIndex = -1;
+
+        async function fetchPartDetails(partNumber) {
+            try {
+                const response = await fetch(`http://localhost:3000/api/part_details?part_number=${partNumber}`, {
+                    credentials: 'include' // Include cookies in the request
+                });
+                const data = await response.json();
+                console.log(data);
+                return data;
+            } catch (error) {
+                console.error('Error fetching part details:', error);
+                return null;
+            }
+        }
+
+        async function addItem() {
+            const partNumber = document.getElementById('partNumber').value;
+            const quantity = document.getElementById('quantity').value;
+
+            const partDetails = await fetchPartDetails(partNumber);
+            if (partDetails) {
+                const price = partDetails.price;
+                const description = partDetails.description;
+
+                const totalPrice = (quantity * price).toFixed(2);
+                const item = { partNumber, quantity, price, description, totalPrice };
+                items.push(item);
+
+                const table = document.getElementById('itemsTable').getElementsByTagName('tbody')[0];
+                const newRow = table.insertRow();
+                newRow.insertCell(0).innerText = partNumber;
+                newRow.insertCell(1).innerText = quantity;
+                newRow.insertCell(2).innerText = price;
+                newRow.insertCell(3).innerText = description;
+                newRow.insertCell(4).innerText = totalPrice;
+                newRow.insertCell(5).innerHTML = `<span class="edit" onclick="editItem(${items.length - 1})">Edit</span> | <span class="delete" onclick="deleteItem(${items.length - 1})">Delete</span>`;
+
+                document.getElementById('orderForm').reset();
+                updateTotalCost();
+            } else {
+                alert('Error fetching part details. Please try again.');
+            }
+        }
+
+        function editItem(index) {
+            document.getElementById('partNumber').value = items[index].partNumber;
+            document.getElementById('quantity').value = items[index].quantity;
+            currentIndex = index;
+            document.querySelector("button[onclick='addItem()']").style.display = 'none';
+            document.querySelector("button[onclick='updateItem()']").style.display = 'inline-block';
+        }
+
+        async function updateItem() {
+            const partNumber = document.getElementById('partNumber').value;
+            const quantity = document.getElementById('quantity').value;
+
+            const partDetails = await fetchPartDetails(partNumber);
+            if (partDetails) {
+                const price = partDetails.price;
+                const description = partDetails.description;
+                const totalPrice = (quantity * price).toFixed(2);
+
+                items[currentIndex] = { partNumber, quantity, price, description, totalPrice };
+
+                const table = document.getElementById('itemsTable').getElementsByTagName('tbody')[0];
+                const row = table.rows[currentIndex];
+                row.cells[0].innerText = partNumber;
+                row.cells[1].innerText = quantity;
+                row.cells[2].innerText = price;
+                row.cells[3].innerText = description;
+                row.cells[4].innerText = totalPrice;
+
+                document.getElementById('orderForm').reset();
+                document.querySelector("button[onclick='addItem()']").style.display = 'inline-block';
+                document.querySelector("button[onclick='updateItem()']").style.display = 'none';
+                currentIndex = -1;
+                updateTotalCost();
+            } else {
+                alert('Error fetching part details. Please try again.');
+            }
+        }
+
+        function deleteItem(index) {
+            items.splice(index, 1);
+            const table = document.getElementById('itemsTable').getElementsByTagName('tbody')[0];
+            table.deleteRow(index);
+            updateTotalCost();
+        }
+
+        function updateTotalCost() {
+            const totalCost = items.reduce((sum, item) => sum + parseFloat(item.totalPrice), 0).toFixed(2);
+            document.getElementById('totalCost').innerText = `Total Order Price: $${totalCost}`;
+
+            const table = document.getElementById('itemsTable').getElementsByTagName('tbody')[0];
+            table.innerHTML = '';
+            items.forEach((item, index) => {
+                const newRow = table.insertRow();
+                newRow.insertCell(0).innerText = item.partNumber;
+                newRow.insertCell(1).innerText = item.quantity;
+                newRow.insertCell(2).innerText = item.price;
+                newRow.insertCell(3).innerText = item.description;
+                newRow.insertCell(4).innerText = item.totalPrice;
+                newRow.insertCell(5).innerHTML = `<span class="edit" onclick="editItem(${index})">Edit</span> | <span class="delete" onclick="deleteItem(${index})">Delete</span>`;
+            });
+        }
+
+        function exportCSV() {
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Part Number,Quantity,Price per Unit,Description,Total Price\n";
+
+            items.forEach(item => {
+                const row = `${item.partNumber},${item.quantity},${item.price},${item.description},${item.totalPrice}\n`;
+                csvContent += row;
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement('a');
+            link.setAttribute('href', encodedUri);
+            link.setAttribute('download', 'order_request.csv');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>
