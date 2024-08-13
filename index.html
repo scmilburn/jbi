@@ -163,7 +163,7 @@
 
             //const partDetails = await fetchPartDetails(partNumber);
             const price = 0;
-            const description = "https://www.jbi.bike/site/product_details.php?part_number=" + partNumber;
+            const description = partNumber.link("https://www.jbi.bike/site/product_details.php?part_number=" + partNumber);
             
             const totalPrice = 0;
             //(quantity * price).toFixed(2)
@@ -199,7 +199,7 @@
             const partDetails = await fetchPartDetails(partNumber);
             
             const price = 0;
-            const description = "https://www.jbi.bike/site/product_details.php?part_number=" + partNumber;
+            const description = partNumber.link("https://www.jbi.bike/site/product_details.php?part_number=" + partNumber);
             
             const totalPrice = 0;
             //(quantity * price).toFixed(2);
@@ -258,7 +258,7 @@
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement('a');
             link.setAttribute('href', encodedUri);
-            link.setAttribute('download', 'order_request.csv');
+            link.setAttribute('download', 'jbi_order_request.csv');
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
