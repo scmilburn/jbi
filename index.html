@@ -200,8 +200,9 @@
 
             const partDetails = await fetchPartDetails(partNumber);
             if (partDetails) {
-                const price = partDetails.price;
-                const description = partDetails.description;
+                const price = partDetails;
+                const description = `https://www.jbi.bike/site/product_details.php?part_number=${partNumber}`;
+                
                 const totalPrice = (quantity * price).toFixed(2);
 
                 items[currentIndex] = { partNumber, quantity, price, description, totalPrice };
