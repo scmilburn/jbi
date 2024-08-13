@@ -175,7 +175,7 @@
             newRow.insertCell(0).innerText = partNumber;
             newRow.insertCell(1).innerText = quantity;
             newRow.insertCell(2).innerText = price;
-            newRow.insertCell(3).innerText = description;
+            newRow.insertCell(3).innerHTML = description;
             newRow.insertCell(4).innerText = totalPrice;
             newRow.insertCell(5).innerHTML = `<span class="edit" onclick="editItem(${items.length - 1})">Edit</span> | <span class="delete" onclick="deleteItem(${items.length - 1})">Delete</span>`;
 
@@ -211,7 +211,7 @@
             row.cells[0].innerText = partNumber;
             row.cells[1].innerText = quantity;
             row.cells[2].innerText = price;
-            row.cells[3].innerText = description;
+            row.cells[3].innerHTML = description;
             row.cells[4].innerText = totalPrice;
 
             document.getElementById('orderForm').reset();
