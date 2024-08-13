@@ -163,8 +163,7 @@
 
             //const partDetails = await fetchPartDetails(partNumber);
             const price = 0;
-            const description = partNumber.link("https://www.jbi.bike/site/product_details.php?part_number=" + partNumber);
-            
+            const description = `<a href="https://www.jbi.bike/site/product_details.php?part_number=${partNumber}" target="_blank">Part Number ${partNumber}</a>`;
             const totalPrice = 0;
             //(quantity * price).toFixed(2)
             const item = { partNumber, quantity, price, description, totalPrice };
@@ -199,7 +198,7 @@
             const partDetails = await fetchPartDetails(partNumber);
             
             const price = 0;
-            const description = partNumber.link("https://www.jbi.bike/site/product_details.php?part_number=" + partNumber);
+            const description = `<a href="https://www.jbi.bike/site/product_details.php?part_number=${partNumber}" target="_blank">Part Number ${partNumber}</a>`;
             
             const totalPrice = 0;
             //(quantity * price).toFixed(2);
