@@ -161,29 +161,27 @@
             const partNumber = document.getElementById('partNumber').value;
             const quantity = document.getElementById('quantity').value;
 
-            const partDetails = await fetchPartDetails(partNumber);
-            if (partDetails) {
-                const price = partDetails;
-                const description = `https://www.jbi.bike/site/product_details.php?part_number=${partNumber}`;
-                
-                const totalPrice = (quantity * price).toFixed(2);
-                const item = { partNumber, quantity, price, description, totalPrice };
-                items.push(item);
+            //const partDetails = await fetchPartDetails(partNumber);
+            const price = 0;
+            const description = "https://www.jbi.bike/site/product_details.php?part_number=" + partNumber;
+            
+            const totalPrice = 0;
+            //(quantity * price).toFixed(2)
+            const item = { partNumber, quantity, price, description, totalPrice };
+            items.push(item);
 
-                const table = document.getElementById('itemsTable').getElementsByTagName('tbody')[0];
-                const newRow = table.insertRow();
-                newRow.insertCell(0).innerText = partNumber;
-                newRow.insertCell(1).innerText = quantity;
-                newRow.insertCell(2).innerText = price;
-                newRow.insertCell(3).innerText = description;
-                newRow.insertCell(4).innerText = totalPrice;
-                newRow.insertCell(5).innerHTML = `<span class="edit" onclick="editItem(${items.length - 1})">Edit</span> | <span class="delete" onclick="deleteItem(${items.length - 1})">Delete</span>`;
+            const table = document.getElementById('itemsTable').getElementsByTagName('tbody')[0];
+            const newRow = table.insertRow();
+            newRow.insertCell(0).innerText = partNumber;
+            newRow.insertCell(1).innerText = quantity;
+            newRow.insertCell(2).innerText = price;
+            newRow.insertCell(3).innerText = description;
+            newRow.insertCell(4).innerText = totalPrice;
+            newRow.insertCell(5).innerHTML = `<span class="edit" onclick="editItem(${items.length - 1})">Edit</span> | <span class="delete" onclick="deleteItem(${items.length - 1})">Delete</span>`;
 
-                document.getElementById('orderForm').reset();
-                updateTotalCost();
-            } else {
-                alert('Error fetching part details. Please try again.');
-            }
+            document.getElementById('orderForm').reset();
+            updateTotalCost();
+
         }
 
         function editItem(index) {
@@ -199,30 +197,29 @@
             const quantity = document.getElementById('quantity').value;
 
             const partDetails = await fetchPartDetails(partNumber);
-            if (partDetails) {
-                const price = partDetails;
-                const description = `https://www.jbi.bike/site/product_details.php?part_number=${partNumber}`;
-                
-                const totalPrice = (quantity * price).toFixed(2);
+            
+            const price = 0;
+            const description = "https://www.jbi.bike/site/product_details.php?part_number=" + partNumber;
+            
+            const totalPrice = 0;
+            //(quantity * price).toFixed(2);
 
-                items[currentIndex] = { partNumber, quantity, price, description, totalPrice };
+            items[currentIndex] = { partNumber, quantity, price, description, totalPrice };
 
-                const table = document.getElementById('itemsTable').getElementsByTagName('tbody')[0];
-                const row = table.rows[currentIndex];
-                row.cells[0].innerText = partNumber;
-                row.cells[1].innerText = quantity;
-                row.cells[2].innerText = price;
-                row.cells[3].innerText = description;
-                row.cells[4].innerText = totalPrice;
+            const table = document.getElementById('itemsTable').getElementsByTagName('tbody')[0];
+            const row = table.rows[currentIndex];
+            row.cells[0].innerText = partNumber;
+            row.cells[1].innerText = quantity;
+            row.cells[2].innerText = price;
+            row.cells[3].innerText = description;
+            row.cells[4].innerText = totalPrice;
 
-                document.getElementById('orderForm').reset();
-                document.querySelector("button[onclick='addItem()']").style.display = 'inline-block';
-                document.querySelector("button[onclick='updateItem()']").style.display = 'none';
-                currentIndex = -1;
-                updateTotalCost();
-            } else {
-                alert('Error fetching part details. Please try again.');
-            }
+            document.getElementById('orderForm').reset();
+            document.querySelector("button[onclick='addItem()']").style.display = 'inline-block';
+            document.querySelector("button[onclick='updateItem()']").style.display = 'none';
+            currentIndex = -1;
+            updateTotalCost();
+
         }
 
         function deleteItem(index) {
